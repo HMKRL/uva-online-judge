@@ -1,6 +1,6 @@
 P=
 OBJECTS=
-CXXFLAGS=-g -Wall -std=c++0x
+CXXFLAGS=-g -Wall -std=c++11
 CFLAGS=-g -Wall
 LDLIBS=
 CXX=g++

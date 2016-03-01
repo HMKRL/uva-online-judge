@@ -23,16 +23,14 @@ int main()
 							else str.push(c);
 							break;
 						case ']':
-							if(c == '[') str.pop();
-							else str.push(c);
+							str.push(c);
 							break;
 						case '(':
 							if(c == ')') str.pop();
 							else str.push(c);
 							break;
 						case ')':
-							if(c == '(') str.pop();
-							else str.push(c);
+							str.push(c);
 							break;
 						default:
 							break;

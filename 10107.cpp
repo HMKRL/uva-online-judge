@@ -5,14 +5,14 @@ using namespace std;
 
 int main()
 {
-	int n[10000] = {0}, i = 0;
-	while(scanf("%d", &n[i]) != EOF) {
+	unsigned int n[10000] = {0}, i = 0;
+	while(scanf("%u", &n[i]) != EOF) {
 		sort(n,n + i + 1);
 		if((i + 3) % 2 != 0) {
-			printf("%d\n", n[(i + 1) / 2]);
+			printf("%u\n", n[(i + 1) / 2]);
 		}
 		else {
-			printf("%d\n", (n[i / 2] + n[(i + 1) / 2]) / 2);
+			printf("%u\n", (n[i / 2] + n[(i + 1) / 2]) / 2);
 		}
 		i++;
 	}
