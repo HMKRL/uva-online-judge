@@ -1,4 +1,4 @@
-#include<cmath>
+nclude<cmath>
 #include<cstdio>
 using namespace std;
 

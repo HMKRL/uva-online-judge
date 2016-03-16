@@ -9,7 +9,7 @@ int succ, fail;
 void init(int x)
 {
 	int i;
-	for(i = 0;i < x;i++) {
+	for(i = 0;i <= x;i++) {
 		n[i] = i;
 	}
 
@@ -27,36 +27,42 @@ int Find(int x)
 
 void Union(int a,int b)
 {
-	n[a] = Find(n[b]);
+	n[Find(a)] = Find(b);
 
 	return;
 }
 
 int main()
 {
-	int num, a, b, i, x, j;
+	int num, a, b, i, x;
 	char c;
-	while(cin >> num) {
-		for(i = 0;i < num;++i) {
+	cin >> num;
+	while(num--) {
+		//for(i = 0;i < num;++i) {
 			succ = 0;
 			fail = 0;
 			cin >> x;
+			getchar();
 			init(x);
 			while(1) {
 				c = getchar();
 				if(c == 'c') {
 					cin >> a >> b;
 					Union(a, b);
+					getchar();
 				}
 				else if(c == 'q') {
 					cin >> a >> b;
 					if(Find(a) == Find(b)) succ++;
 					else fail++;
+					getchar();
 				}
 				else
 					break;
 			}
-			cout << succ << ',' << fail << endl << endl;
-		}
+			cout << succ << ',' << fail << endl;
+			if(num) cout << endl;
+//		}
 	}
+	return 0;
 }
