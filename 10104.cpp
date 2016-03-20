@@ -1,5 +1,4 @@
-#include<iostream>
-using namespace std;
+#include<cstdio>
 
 int X, Y;
 
@@ -21,9 +20,9 @@ int gcd(int a, int b)
 int main()
 {
 	int a, b, D;
-	while(cin >> a >> b) {
+	while(scanf("%d %d", &a, &b) != EOF) {
 		D = gcd(a, b);
-		cout << X << ' ' << Y << ' ' << D << endl;
+		printf("%d %d %d\n", X, Y, D);
 	}
 	return 0;
 }
