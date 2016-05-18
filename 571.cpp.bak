@@ -1,0 +1,114 @@
+#include<iostream>
+#include<cstdio>
+#include<queue>
+#include<utility>
+#include<vector>
+#include<map>
+#include<string>
+using namespace std;
+
+queue<pair<int, int>> q;
+pair<int, int> pTemp;
+map<pair<int, int>, int> m;
+map<int, string> p;
+int pre;
+vector<int> step;
+int A, B, T, mI, stepI;
+bool finished;
+
+void print()
+{
+	int i = m[pTemp];
+	while(step[i] != i) {
+		cout << p[i] << endl;
+		i = step[i];
+	}
+	printf("success\n");
+	return;
+}
+
+void BFS_child(int nxtA, int nxtB, int type)
+{
+	if(finished) return;
+	pTemp = make_pair(nxtA, nxtB);
+	if(!m[pTemp]) {
+		q.push(pTemp);
+		m[pTemp] = mI++;
+		step.push_back(pre);
+		stepI++;
+		switch(type) {
+			case 1:
+				p[stepI] = "fill A";
+				break;
+			case 2:
+				p[stepI] = "fill B";
+				break;
+			case 3:
+				p[stepI] = "pour B A";
+				break;
+			case 4:
+				p[stepI] = "pour A B";
+				break;
+			case 5:
+				p[stepI] = "empty A";
+				break;
+			case 6:
+				p[stepI] = "empty B";
+				break;
+			default:
+				break;
+		}
+		if(pTemp.first == T || pTemp.second == T) {
+			finished = true;
+			while(!q.empty()) q.pop();
+		}
+	}
+	return;
+}
+
+void BFS()
+{
+	int curA = 0, curB = 0, pre = 1;
+	pTemp = make_pair(curA, curB);
+	m[pTemp] = mI++;
+	step.push_back(0);//let vector start from 1
+	step.push_back(pre);//step[1] = 1 -> means root;
+	stepI = 2;
+	p[pre] = "success";
+
+	q.push(pTemp);
+	while(!q.empty()) {
+		pTemp = q.front();
+		q.pop();
+		curA = pTemp.first;
+		curB = pTemp.second;
+		if(curA != A) BFS_child(A, curB, 1); //fill A
+		if(curB != B) BFS_child(curA, B, 2); //fill B
+		if(curA != A && curB) {// pour B A
+			if(A - curA >= curB) BFS_child(curA + curB, 0, 3);
+			else BFS_child(A, curB - (A - curA), 3);
+		}
+		if(curB != B && curA) {//pour A B
+			if(B - curB >= curA) BFS_child(0, curB + curA, 4);
+			else BFS_child(curA - (B - curB), B, 4);
+		}
+		if(curA) BFS_child(0, curB, 5);//empty A
+		if(curB) BFS_child(curA, 0, 6);//empty B
+		pre = m[pTemp];
+	}
+	return;
+}
+
+int main()
+{
+	while(scanf("%d %d %d", &A, &B, &T) != EOF) {
+		mI = 1;
+		finished = false;
+		m.clear();
+		p.clear();
+		step.clear();
+		BFS();
+		print();
+	}
+	return 0;
+}

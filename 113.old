@@ -1,0 +1,231 @@
+#include<iostream>
+using namespace std;
+
+class Bignum {
+public:
+	Bignum(){minus = false;};
+	Bignum(string &input) {
+		minus = false;
+		Bignum::operator=(input);
+	}
+	Bignum(int *input) {
+		minus = false;
+		Bignum::operator=(input);
+	}
+	friend ostream& operator<<(ostream &out, const Bignum &B) {
+		int i;
+		if(B.minus) cout << '-';
+		for(i = 219;i > 0;--i) {
+			if(B.num[i]) break;
+		}
+		while(i >= 0) {
+			out << B.num[i--];
+		}
+		return out;
+	};
+	void operator=(string &input) {
+		fill(num, num + 220, 0);
+		int index = 0;
+		for(int i = input.length() - 1;i >= 0;--i) {
+			if(input[i] == '-') {
+				minus = true;
+				continue;
+			}
+			num[index++] = input[i] - '0';
+		}
+	};
+	void operator=(int *input) {
+		for(int i = 0;i < 220;++i) {
+			num[i] = input[i];
+		}
+	};
+	Bignum operator+(Bignum &B) {
+		bool is_minus = false;
+		fill(ans, ans + 220, 0);
+		if(minus == B.minus) {
+			for(int i = 0;i < 220;++i) {
+				ans[i] = num[i] + B.num[i];
+			}
+		}
+		else if(!minus && B.minus){
+			B.minus = false;
+			if (*this < B) {
+				is_minus = true;
+				for(int i = 0;i < 220;++i) {
+					ans[i] = B.num[i] - num[i];
+				}
+			}
+			else {
+				is_minus = false;
+				for(int i = 0;i < 220;++i) {
+					ans[i] = num[i] - B.num[i];
+				}
+			}
+			B.minus = true;
+		}
+		else {
+			minus = false;
+			if(*this > B) {
+				is_minus = true;
+				for(int i = 0;i < 220;++i) {
+					ans[i] = num[i] - B.num[i];
+				}
+			}
+			else {
+				is_minus = false;
+				for(int i = 0;i < 220;++i) {
+					ans[i] = B.num[i] - num[i];
+				}
+			}
+			minus = true;
+		}
+		if(minus && B.minus) is_minus = true;
+		trim(ans);
+		Bignum out(ans);
+		out.minus = is_minus;
+		return out;
+	};
+	Bignum operator-(Bignum &B) {
+		Bignum out;
+		out = -B;
+		out = *this + out;
+		return out;
+		//out.minus = !out.minus;
+		//return Bignum::operator+(out);
+	}
+	Bignum operator-() {
+		Bignum out = *this;
+		for(int i = 0;i < 220;++i) {
+			if(num[i]) {
+				out.minus = !minus;
+				break;
+			}
+		}
+		return out;
+	};
+	Bignum operator*(Bignum &B) {
+		fill(ans, ans + 220, 0);
+		for(int i = 0;i < 110;++i) {
+			for(int j = 0;j < 110;++j) {
+				ans[i + j] += num[i] * B.num[j];
+			}
+		}
+		trim(ans);
+		Bignum out(ans);
+		out.minus = !(minus == B.minus);
+		return out;
+	};
+	bool operator>(Bignum &B) {
+		if(!(minus == B.minus)) return !minus;
+		for(int i = 219;i >= 0;--i) {
+			if((num[i] || B.num[i]) && !(num[i] == B.num[i])) {
+				if(num[i] > B.num[i]) return !minus;
+				else return minus;
+			}
+		}
+		return false;
+	};
+	bool operator<(Bignum &B) {
+		if(!(minus == B.minus)) return minus;
+		for(int i = 219;i >= 0;--i) {
+			if((num[i] || B.num[i]) && !(num[i] == B.num[i])) { 
+				if(num[i] < B.num[i]) return !minus;
+				else return minus;
+			}
+		}
+		return false;
+	};
+	bool operator==(Bignum &B) {
+		for(int i = 0;i < 220;++i) {
+			if(num[i] != B.num[i]) return false;
+		}
+		return true;
+	};
+	Bignum half() {
+		Bignum out = *this;
+		int i;
+		for(i = 219; i >= 0;--i) {
+			if(out.num[i]) break;
+		}
+		while(i > 0) {
+			if(out.num[i] % 2) {
+				out.num[i]--;
+				out.num[i - 1] += 10;
+			}
+			out.num[i] /= 2;
+			--i;
+		}
+		out.num[0] /= 2;
+		return out;
+	};
+	Bignum operator+(int i) {
+		Bignum out = *this;
+		int Index = 0;
+		while(i) {
+			out.num[Index++] += i % 10;
+			i /= 10;
+		}
+		trim(out);
+		return out;
+	};
+	Bignum pow(int i) {
+		Bignum out = *this;
+		while(--i) {
+			out = out * *this;
+		}
+		return out;
+	};
+private:
+	int num[220];
+	int ans[220];
+	bool minus;
+	void trim(Bignum &B) {
+		for(int i = 0;i < 219;++i) {
+			if(B.ans[i] >= 0) {
+				B.ans[i + 1] += B.ans[i] / 10;
+				B.ans[i] %= 10;
+			}
+			else if(B.ans[i] < 0) {
+				B.ans[i + 1]--;
+				B.ans[i] += 10;
+			}
+		}
+	};
+	void trim(int *a) {
+		for(int i = 0;i < 219;++i) {
+			if(a[i] >= 0) {
+			a[i + 1] += a[i] / 10;
+				a[i] %= 10;
+			}
+			else if(a[i] < 0) {
+				a[i + 1]--;
+				a[i] += 10;
+			}
+		}
+	};
+};
+
+int main()
+{
+	int n, i = 0;
+	string p;
+	Bignum L, H, P, K, temp;
+	string a = "0", b = "1000000000";
+	while(cin >> n >> p) {
+		L = a;
+		H = b;
+		P = p;
+		while(L < H) {
+			K = L + H;
+			K = K.half();
+			temp = K.pow(n);
+			if(temp == P) break;
+			if(temp < P) {
+				L = K + 1;
+			}
+			else H = K;
+		}
+		cout << K << endl;
+	}
+	return 0;
+}

@@ -1,0 +1,70 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+long long int Case, book, group;
+vector<int> arr;
+vector<int>::iterator it;
+
+long long int binary_search(long long int left, long long int right)
+{
+	if(left >= right) return right;
+//	else if(left + 1 == right) return left;
+	long long int count = 1;
+	long long int mid = (left + right) / 2, total = 0;
+	for(int i = 0;i < book;++i) {
+		if(total + arr[i] <= mid) total += arr[i];
+		else {
+			count++;
+			total = arr[i];
+		}
+	}
+	if(count <= group) return binary_search(left, mid);
+	else return binary_search(mid + 1, right);
+}
+
+int main()
+{
+	long long int left, right, Final, total;
+	int temp;
+	cin >> Case;
+	while(Case--) {
+		left = 0;
+		total = 0;
+		right = 0;
+		arr.clear();
+		arr.reserve(1000);
+		cin >> book >> group;
+		for(int i = 0;i < book;++i) {
+			cin >> temp;
+			if(temp > left) left = temp;
+			right += temp;
+			arr.push_back(temp);
+		}
+		Final = binary_search(left, right);
+		for(it = arr.end() - 1;it != arr.begin();--it) {
+			if(total + *it <= Final) {
+				total += *it;
+			}
+			else {
+				total = *it;
+				arr.insert(it + 1, 0);
+				group--;
+//				if(it == arr.begin()) break;
+			}
+		}
+		it = arr.begin();
+		while(group > 1) {
+			arr.insert(it + 1, 0);
+			it += 2;
+			group--;
+		}
+		for(it = arr.begin();it != arr.end();++it) {
+			if(*it) cout << *it;
+			else cout << '/';
+			if(it + 1 != arr.end()) cout << ' ';
+			else cout << endl;
+		}
+	}
+	return 0;
+}

@@ -31,7 +31,7 @@ void Bignum::operator=(string &input) {
 			minus = true;
 			continue;
 		}
-		if(input[i] != '0') num[index++] = input[i] - '0';
+		num[index++] = input[i] - '0';
 	}
 };
 void Bignum::operator=(int *input) {
