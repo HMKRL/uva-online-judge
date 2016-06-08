@@ -20,7 +20,7 @@ bool DFS(int cur)
 		int nxt = path[cur][i];
 		if(!used[nxt]) {
 			used[nxt] = true;
-			if(!rlink[nxt] || DFS(rlink[nxt])) {
+			if(rlink[nxt] == -1 || DFS(rlink[nxt])) {
 				rlink[nxt] = cur;
 				llink[cur] = nxt;
 				return true;
@@ -35,22 +35,21 @@ int main()
 	int cnt;
 	while(scanf("%d %d %d %d", &n, &m, &s, &v) != EOF) {
 		cnt = 0;
-		fill(llink, llink + 200, 0);
-		fill(rlink, rlink + 200, 0);
+		fill(llink, llink + 200, -1);
+		fill(rlink, rlink + 200, -1);
 		for(int i = 0;i < 200;++i) path[i].clear();
-		for(int i = 1;i <= n;++i) scanf("%lf %lf", &mouse[i].x, &mouse[i].y);
-		for(int i = 1;i <= m;++i) scanf("%lf %lf", &hole[i].x, &hole[i].y);
+		for(int i = 0;i < n;++i) scanf("%lf %lf", &mouse[i].x, &mouse[i].y);
+		for(int i = 0;i < m;++i) scanf("%lf %lf", &hole[i].x, &hole[i].y);
 		
-		for(int i = 1;i <= n;++i) {
-			for(int j = 1;j <= m;++j) {
+		for(int i = 0;i < n;++i) {
+			for(int j = 0;j < m;++j) {
 				double far = sqrt(pow(mouse[i].x - hole[j].x, 2) + pow(mouse[i].y - hole[j].y, 2));
 				if(far / v <= s) {
 					path[i].push_back(j);
-					path[j].push_back(i);
 				}
 			}
 		}
-		for(int i = 1;i <= n;++i) {
+		for(int i = 0;i < n;++i) {
 			fill(used, used + 200, false);
 			if(DFS(i)) ++cnt;
 		}
